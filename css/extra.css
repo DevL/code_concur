@@ -1,3 +1,7 @@
+ul.none {
+  list-style: none;
+}
+
 ul.plus, ul.minus {
   list-style: none;
 }
@@ -28,4 +32,24 @@ code.small {
 
 div.left {
   text-align: left;
+}
+
+div.quote {
+  font-style: italic;
+  padding: 1em;
+}
+
+ul.large {
+  font-size: 125%;
+}
+
+span.reference {
+  font-style: italic;
+  font-size: 75%;
+}
+
+img.logo {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
 }

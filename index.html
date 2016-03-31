@@ -3,9 +3,9 @@
 	<head>
 		<meta charset="utf-8">
 
-    <title>Virtually Instructional</title>
+    <title>Code Concur</title>
 
-		<meta name="description" content="A deep-dive into the BEAM's instruction set.">
+		<meta name="description" content="An introduction to Elixir.">
 		<meta name="author" content="Lennart Fridén">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,7 +14,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
 
 		<link rel="stylesheet" href="css/reveal.css">
-		<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+		<link rel="stylesheet" href="css/theme/green_sky.css" id="theme">
 		<link rel="stylesheet" href="css/extra.css">
 
 		<!-- Code syntax highlighting -->
@@ -34,828 +34,440 @@
 		<![endif]-->
 	</head>
 
-<!-- Start -->
 	<body>
+		<img class="logo" src="/images/agical_256x80.png">
 		<div class="reveal">
 			<div class="slides">
-				<section>
-					<h2>Virtually Instructional</h2>
-					<p>Lennart Fridén</p>
-					<p>
-						<small>
-							<a href="http://codecoupled.org">codecoupled.org</a> |
-					  	<a href="http://twitter.com/DevLCSC">@DevLCSC</a> |
-					  	<a href="http://github.com/DevL">github.com/DevL</a>
-						</small>
-					</p>
-					<p><small>ElixirConf 2015, Austin, TX</small></p>
-					<aside class="notes">
-						<p>Your Elixir system.</p>
-						<p>Exquisitely written in a language supporting abstractions that aid and shape your thoughts, concepts, and understanding.</p>
-						<p>Sublimely scalable with supreme utilisation of any and all available resources.</p>
-						<p>Flawless failover and fault-tolerance.</p>
-						<p>Virtually indestructable.</p>
-						<p>At the heart of this lies the Erlang virtual machine, or BEAM as it's more commonly called. And at the heart of the BEAM is a set of instructions codified. These are the small building blocks that your system ultimately consists of. And they look nothing like Elixir itself.</p>
-						<p>Welcome to Virtually Instructional. I'm your host, Lennart Fridén, and together we will explore the language that BEAM truely talks and understands.</p>
-					</aside>
-				</section>
+<!-- INTRO -->
+<section>
+	<section>
+		<h2>Code Concur</h2>
+		<p>Lennart Fridén</p>
+		<p>
+			<small>
+				<a href="http://codecoupled.org">codecoupled.org</a> |
+		  	<a href="http://twitter.com/DevLCSC">@DevLCSC</a> |
+		  	<a href="http://github.com/DevL">github.com/DevL</a>
+			</small>
+		</p>
+		<p><small>Stockholm Google Developer Group March 2016 Meetup</small></p>
+		<aside class="notes">
+			<p>
+				In front of me are N Elixir-curious individuals.
+				N minds, processing and interpreting my words concurrently and in parallel.
+				I interact with these minds, your minds, by speaking, or sending, a message.
+				The message-sending is asynchronous. The only way for me to know if it has been received
+				is if I in turn get sent a message back, acknowledging that my message has been heard and understood.
+				This is the world we live in. What if we had a programming language that regarded the world as it is?
+			</p>
+		</aside>
+	</section>
 
+<!-- MARKETING BLURB -->
+	<section>
+		<div class="quote">
+			Elixir is a dynamic, functional language designed for building scalable and maintainable applications.
+		</div>
+		<div class="quote fragment">
+				Elixir leverages the Erlang VM, known for running low-latency, distributed and fault-tolerant systems,
+				while also being successfully used in web development and the embedded software domain.
+		</div>
+		<aside class="notes">
+			<p>Great, but what does it mean?</p>
+		</aside>
+	</section>
+</section>
 
-<!-- Hello ElixirConf -->
-				<section>
-					<section>
-						<h4>Hello ElixirConf</h4>
-						<pre><code class="hljs elixir" data-trim>
-defmodule Virtually do
-  def instructional do
-    "Hello ElixirConf"
+<!-- INFLUENCES -->
+<section>
+	<section>
+		<h2>Influences</h2>
+		<aside class="notes">
+			<p>Many good ideas come together in Elixir.</p>
+		</aside>
+	</section>
+
+	<!-- BUILT ON ERLANG-->
+	<section>
+		<h4>Elixir is built on Erlang...</h4>
+		<pre><code class="hljs elixir" data-trim>
+defmodule Hello do
+  def world do
+    IO.puts "Hello GDG!"
   end
 end
-						</code></pre>
-						<aside class="notes">
-							<p>Let's follow the path your Elixir code takes until it's running.</p>
-							<p>When compiling your code, you'll get an object file typically called a BEAM file.</p>
-						</aside>
-					</section>
+		</code></pre>
+		<pre class="fragment"><code class="hljs erlang" data-trim>
+-module(hello).
+-export([world/0]).
 
-<!-- BEAM FILE CHUNKS -->
-					<section>
-						<h4>BEAM file</h4>
-						<pre><code class="hljs text shell" data-trim>
-$ hexdump -C Elixir.Virtually.beam
-						</code></pre>
-						<pre><code class="hljs text small" data-trim>
-00000000  46 4f 52 31 00 00 04 dc  42 45 41 4d 45 78 44 63  FOR1....BEAMExDc
-						</code></pre>
-						<pre><code class="hljs text small" data-trim>
-00000090                                       41 74 6f 6d              Atom
-000000a0  00 00 00 60 00 00 00 08  10 45 6c 69 78 69 72 2e  ...`.....Elixir.
-000000b0  56 69 72 74 75 61 6c 6c  79 08 5f 5f 69 6e 66 6f  Virtually.__info
-000000c0  5f 5f 09 66 75 6e 63 74  69 6f 6e 73 06 6d 61 63  __.functions.mac
-000000d0  72 6f 73 06 65 72 6c 61  6e 67 0f 67 65 74 5f 6d  ros.erlang.get_m
-000000e0  6f 64 75 6c 65 5f 69 6e  66 6f 0d 69 6e 73 74 72  odule_info.instr
-000000f0  75 63 74 69 6f 6e 61 6c  0b 6d 6f 64 75 6c 65 5f  uctional.module_
-00000100  69 6e 66 6f                                       info
-						</code></pre>
-						<pre><code class="hljs text small" data-trim>
-00000100              43 6f 64 65  00 00 00 7b 00 00 00 10       Code...{....
-00000110  00 00 00 00 00 00 00 99  00 00 00 0c 00 00 00 04   ................
-00000120  01 10 99 00 02 12 22 10  01 20 30 55 03 3b 03 55   ......".. 0U.;.U
-00000130  17 40 32 35 42 45 01 30  40 47 00 03 13 01 40 40   .@25BE.0@G....@@
-00000140  02 03 13 01 50 40 03 13  40 12 03 99 00 4e 20 00   ....P@..@....N .
-00000150  01 60 99 10 02 12 72 00  01 70 40 47 10 03 13 01   .`....r..p@G....
-00000160  80 99 00 02 12 82 00 01  90 40 12 03 99 00 4e 10   .........@....N.
-00000170  10 01 a0 99 00 02 12 82  10 01 b0 40 03 13 40 12   ...........@..@.
-00000180  03 99 00 4e 20 00 03 00                            ...N ...
-						</code></pre>
-						<aside class="notes">
-							<p>The BEAM file contains a number of chunks of data. In addition to the bytecode itself, used atoms have their own chunk. So do strings.</p>
-							<p>While we can examine the BEAM file, it's hard and slow work disassembling it by hand. We can compile our code, telling the compiler to output "Erlang assembly" rather than an object file.</p>
-						</aside>
-					</section>
+world() ->
+  io:fwrite("Hello, GDG\n").
+		</code></pre>
+		<aside class="notes">
+			<p>
+				What a tiny example like this doesn't show is the vast amount of boilerplate code that Elixir gets out of your
+				face when writing real applications. And keep in mind that Erlang code isn't exactly drowned in cermony to begin with.
+			</p>
+		</aside>
+	</section>
 
-<!-- ERLANG ASSEMBLY -->
-					<section>
-						<h4>Erlang assembly excerpt</h4>
-						<pre><code class="hljs bash" data-trim>
-$ ERL_COMPILER_OPTIONS="'S'" elixirc virtually.ex
-						</code></pre>
-						<pre><code class="hljs erlang" data-trim>
-  {move,{literal,{instructional,[{line,2}],nil}},{x,3}}.
-  {move,{atom,def},{x,1}}.
-  {move,{literal,[{do,<<"Hello ElixirConf">>}]},{x,4}}.
-  {move,{integer,2},{x,0}}.
-  {line,[{location,"virtually.ex",2}]}.
-  {call_ext,6,{extfunc,elixir_def,store_definition,6}}.
-  {move,{literal,<<"000000001574CCC0: i_func_info_IaaI 0 'Elixir.Virtually' instructional 0\n000000001574CCE8: move_return_cr <<\"Hello ElixirConf\">> x(0)\n">>},
-        {x,0}}.
-  {deallocate,0}.
-  return.
-						</code></pre>
-						<aside class="notes">
-							<p>This allows us to see how our Elixir code is transformed into an intermediate format before being compiled to bytecode, and now we start seeing the assembly mnemonics that more closely maps to the actual bytecode than the original Elixir code.</p>
-						</aside>
-					</section>
+	<!-- RUNS ON THE BEAM-->
+	<section>
+		<h4>...runs on the Erlang virtual machine (BEAM)</h4>
+		<aside class="notes">
+			<p>
+				A lot of the semantics of Erlang and Elixir are both enabled and constrained by the runtime.
+				Just like the Java virtual machine, JVM, enables and constrains languages running on top of it.
+			</p>
+		</aside>
+	</section>
 
-<!-- GENERIC BEAM INSTRUCTIONS -->
-					<section>
-						<h4>Generic BEAM instructions</h4>
-						<pre><code class="hljs text" data-trim>
-https://github.com/erlang/otp/blob/master/lib/compiler/src/genop.tab
-						</code></pre>
-						<pre><code class="hljs text" data-trim>
-1:    label/1
-2:    func_info/3
-3:    int_code_end/0
-4:    call/2
-5:    call_last/3
-6:    call_only/2
-...
-64:   move/2
-65:   get_list/3
-66:   get_tuple_element/3
-67:   set_tuple_element/3
-...
-154:  put_map_assoc/5
-155:  put_map_exact/5
-156:  is_map/2
-157:  has_map_fields/3
-158:  get_map_elements/3
-						</code></pre>
-						<aside class="notes">
-							<p>Right now, there are 158 different instructions. The latest to be added as part of Erlang release 17 deal with maps.</p>
-							<p>However, this too doesn't reveal the inner machinations of the BEAM.</p>
-							<p>Not even the bytecode tells the whole story. When a BEAM file is loaded, the instructions are transformed. Some are transformed from the generic form stored in the BEAM file to a specialised or more specific form. Yet others are combined into single, more efficient superinstructions.</p>
-						</aside>
-					</section>
-
-<!-- INSTRUCTION TRANSFORMATIONS -->
-					<section>
-						<h4>Instruction transformations</h4>
-						<table>
-							<thead>
-								<tr>
-									<th>Generic</th>
-									<th>Transformed</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>(27) -m_plus/4</td>
-									<td>i_increment</td>
-								</tr>
-								<tr>
-									<td>(57) is_tuple/2<br/>(58) test_arity/3</td>
-									<td>is_tuple_of_arity</td>
-								</tr>
-							</tbody>
-						</table>
-						<aside class="notes">
-							<p>An example of the former would be replacing the generic addition instruction known by the compiler with an increment instruction only known to the runtime system.</p>
-							<p>An example of a superinstruction would be combining the instructions "is_tuple" and "test_arity" into one, "is_tuple_of_arity".</p>
-							<p>If we want to see how the BEAM interprets and transforms our code, we need to look at the state of a running system. Luckily, Erlang provides the means of this type of introspection in the form of the "DF" function that resides in the "erts_debug" module.</p>
-						</aside>
-					</section>
-
-<!-- DISASSEMBLED ELIXIR -->
-					<section>
-						<h4>Hello ElixirConf (disassembled)</h4>
-						<pre><code class="hljs elixir" data-trim>
-iex(1)> :erts_debug.df Virtually
-						</code></pre>
-						<pre class="fragment" data-fragment-index="1"><code class="hljs text" data-trim>
-(memory address): (instruction)_(operand types) arg0 arg1 ...
-						</code></pre>
-						<pre class="fragment" data-fragment-index="1"><code class="hljs text" data-trim>
-000000001574CCC0: i_func_info_IaaI 0 'Elixir.Virtually' instructional 0
-000000001574CCE8: move_return_cr <<"Hello ElixirConf">> x(0)
-						</code></pre>
-						<aside class="notes">
-							<p>Using it, we can disassemble a loaded module from within a running system. Technically it's three functions, depending on what you wish to disassemble. A module, a function, or a function with a specific arity.</p>
-							<p>The DF function will save the disassembled code to a .dis file. Opening this, we finally get a glimpse of the language of the BEAM.</p>
-							<p>Disassembled code follows the following pattern. First we have the memory address of the instruction, here shown as a 64-bit hexadecimal value. Next comes the instruction, consisting of two parts; the instruction name and the number and types of operands accepted. For example, a capital 'I' indicates an integer literal, whereas a lowercase 'a' denotes an atom.</p>
-							<p>With this we can take a look at the disassembled code.</p>
-							<p>A thankfully short function, it really only consists of two instructions. The first, "i_func_info" pretty much states that this is the beginning of the function "instructional" which has an arity of nil and resides in the module "Elixir.Virtually". That covers the last three operands, for that instruction. The very first operand is described as, and I quote from my "Erlang on Xen" source, "a mystery coming out of nowhere, probably, needed for NIFs (Native Implemented Functions)".</p>
-							<p>The second instruction is an example of a super-instruction. It places the binary "Hello ElixirConf" in the first register, X0, and returns it in one go. Normally this would have been a move instruction followed by a return instruction.</p>
-						</aside>
-					</section>
-			</section>
-
-
-<!-- REGISTERS -->
-				<section>
-					<section>
-						<h2>Register?</h2>
-						<p class="fragment" data-fragment-index="1">
-							A tiny sliver of memory built into a CPU.
-						</p>
-						<p class="fragment" data-fragment-index="1">
-							Tiny. But very, very fast to access.
-						</p>
-						<aside class="notes">
-							<p>Wait a second. Register. What's that? Well, in a real CPU a register is best thought of as a tiny sliver of memory that's extremely fast to access. Unlike the original Erlang virtual machine, JAM, or Joe's Abstract Machine, BEAM is a register-based virtual machine, in part mimicking a real world CPU by having virtual registers.</p>
-						</aside>
-					</section>
-
-<!-- REGISTER-BASED VM -->
-					<section>
-						<h4>Register-based machine</h4>
-						<img width="680" height="300" data-src="images/register-based.png" alt="Register-based machine principal">
-						<p><small>BEAM, Parrot <em>(Perl 6 et al)</em>, Dalvik <em>(Android), Lua</em></small></p>
-						<aside class="notes">
-							<p>Typically, a series of instructions loads some data into a register, operate on it, and then store it back to memory. It's a bit like keeping several things in your head at once without having to look them up again.</p>
-							<p>BEAM is far from the only register-base virtual machine out there. If you have a device running Android, then it's powered by Dalvik which is register-based. Other examples of register-based virtual machines include Lua and Parrot, the virtual machine targeting dynamic programming languages, coming out of the Perl 6 community. We'll revisit the old bird later.</p>
-							<p>So if the BEAM is a register-based virtual machine, then what was JAM? It turns out it was a stack-based virtual machine.</p>
-						</aside>
-					</section>
-
-<!-- STACK-BASED VM -->
-					<section>
-						<h4>Stack-based machine</h4>
-						<img width="400" height="300" data-src="images/stack-based.png" alt="Stack-based machine principal">
-						<small>JAM <em>(Joe's Abstract Machine)</em>, JVM <em>(Java Virtual Machine)</em>, Forth</small>
-						<aside class="notes">
-							<p>While JAM is ancient history by now, a far more known and used example of a stack-based virtual machine is the Java Virtual Machine (JVM).</p>
-							<p>A stack-based VM operates without the use of registers.<p>
-							<p>The instruction currently being executed will pop its operands off the stack, perform some form of operation on them, and then store the result back to the stack.</p>
-							<p>Let’s look at a real world example. Let us look at some Java.</p>
-						</aside>
-					</section>
-
-<!-- JAVA EXAMPLE -->
-					<section>
-						<h4>Let's pick apart some Java</h4>
-						<pre><code class="hljs java" data-trim>
-public class StackMachine {
-  public int doubleSumOf(int a, int b) {
-    return 2 * (a + b);
-  }
-}
-						</code></pre>
-						<pre class="fragment"><code class="hljs shell" data-trim>
-$ javac StackMachine.java
-$ javap -c StackMachine.class
-						</code></pre>
-						<pre class="fragment"><code class="hljs java" data-trim>
-Code:
-  0: iconst_2     // stack = [2]
-  1: iload_1      // stack = [a, 2]
-  2: iload_2      // stack = [b, a, 2]
-  3: iadd         // stack = [(a + b), 2]
-  4: imul         // stack = [2 * (a + b)]
-  5: ireturn      // stack = []
-						</code></pre>
-						<aside class="notes">
-							<p>Don’t worry, we’ll just look at a single method. You can handle it.</p>
-							<p>This method will add its two arguments and multiply the sum with 2. Essentially what our toy bytecode did in the last example.</p>
-							<p>Compiling this with the javac compiler results in a class file. Like a BEAM file it contains various sections for constants and actual bytecode. We can see that this is the case by running the class file through the javap disassembler.</p>
-							<p>I’ve added comments to show you what the stack contains after each instruction has been executed.</p>
-							<p>ICONST_2 will push the value 2 onto the stack. Notice that the value 2 is inherently encoded in the instruction itself. There are other instructions that will the next piece of bytecode as an immediate value, so instructions and data can be mixed even if they aren't in our example.</p>
-							<p>Next up we place the two operands on the stack. IADD will then pop them off the stack, add them, and place the result back on the stack. The stack now holds the sum and the value 2.</p>
-							<p>IMUL will pop the sum and the 2 off the stack, use them as factors, and place the product back on the stack. Finally, IRETURN pops the product off the stack and returns it to the caller of the method.</p>
-							<p>See, I told you’d survive a little bit of Java.</p>
-							<p>Ok, so if the basic architecture of a stack-based machine is so simple, and simple as we all know is a good principal to strive for, why is the BEAM register-based?</p>
-							<p>Obviously there are reasons for adopting the one or the other architecture when designing a virtual machine.</p>
-						</aside>
-					</section>
-
-<!-- STACK-BASED VS REGISTER-BASED -->
-					<section>
-						<h4>Stack-based vs register-based</h4>
-						<div class="left">
-							<ul class="plus">
-								<li class="fragment">
-									Easier to implement
-									<ul>
-										<li>Simpler compilers</li>
-										<li>Simpler interpreters</li>
-									</ul>
-								</li>
-								<li class="fragment">More compact bytecode</li>
-								<li class="fragment">Minimal CPU state</li>
-							</ul>
-							<ul class="minus">
-								<li class="fragment">Potentially increased memory access</li>
-								<li class="fragment">No virtual registers to map to real ones</li>
-							</ul>
-							<span class="fragment">
-								<hr>
-								<p>Trades performance for ease of implementation</p>
-							</span>
-						</div>
-						<aside class="notes">
-							<p>In general, stack-based virtual machines are easier to implement, result in more compact bytecode, simpler compilers, simpler interpreters, and a minimal CPU state to keep track of. You can get away with having a pointer to the next instruction to execute, and a pointer to the top of the stack. That's it.</p>
-							<p>However, stack-based machines entail a lot of memory access. You'll be constantly loading things onto the stack whereas a register-based machine allows you to put something into the fifth register and keep it there until you need it a number of instructions later. Also, a register-based machine can have an easier time mapping its virtual registers to real registers in the CPU, thus making better use of its capabilities.</p>
-							<p>In a nutshell, a stack-based VM picks simplicity over performance.</p>
-						</aside>
-					</section>
-
-<!-- PERFORMANCE -->
-					<section>
-						<h4><em>Virtual Machine Showdown: Stack versus Registers</em></h4>
-						<p>Yunhe Shi</p>
-						<p><small>
-							<a href="https://www.scss.tcd.ie/publications/tech-reports/reports.07/TCD-CS-2007-49.pdf">https://www.scss.tcd.ie/publications/tech-reports/reports.07/TCD-CS-2007-49.pdf </a>
-						</small></p>
-						<aside class="notes">
-							<p>In his dissertation "Virtual Machine Showdown: Stack versus Registers", Yunhe Shi, compared a register-based Java virtual machine to the ordinary stack-based one. He found that he could make it execute far fewer virtual instructions and thus accomplish the same task faster while only growing the bytecode footprint by a quarter. Threading the bytecode was a big part of that.</p>
-						</aside>
-					</section>
-
-<!-- CODE THREADING -->
-					<section>
-						<h4>Code threading</h4>
-						<pre><code class="hljs elixir" data-trim>
-def decode(instruction, x, y) do
-  if instruction == :add do
-    x + y
-  else if instruction == :subtract do
-      x - y
-    else if instruction == :divide do
-        x / y
-      else
-        raise "Unknown instruction"
-      end
-    end
+	<!-- RUBY -->
+	<section>
+		<h4>Ruby</h4>
+		<pre><code class="hljs elixir" data-trim>
+defmodule Hello do
+  def world do
+    IO.puts "Hello GDG!"
   end
 end
-						</code></pre>
-						<pre class="fragment"><code class="hljs elixir" data-trim>
-def decode(:add, x, y), do: x + y
-def decode(:subtract, x, y), do: x - y
-def decode(:divide, x, y), do: x / y
-						</code></pre>
-						<aside class="notes">
-							<p>In addition to transforming instructions, the beamfile loader also "threads" the code when loading it. Threading in this case does not refer to concurrency, but rather placing the loaded, transformed code in memory so that it in practice behaves like a series of function calls.</p>
-							<p>Somewhat simplified, think of going through a massive, nested if-else expression, switching on the instruction to figure out what to do with it. If we have a few hundred different instructions, we'll spend a lot of time just dispatching to the relevant piece of code for executing the instruction at hand.</p>
-							<p>Threaded code behaves rather as we imagine pattern matching behaves. We instantly find the right piece of code to execute without having to go through a plethora of other options first. This considerably speeds up execution times.</p>
-							<p>Later we'll see that pattern matching actually doesn't work in this magical way, but the notion of it doing so illustrates the advantage of threaded code.</p>
-							<p>At the end of the day, a purely stack-based machine picks simplicity over performance. Of course, the JVM for example then adds a ton of tricks to regain the potentially lost performance. Code hotspot analysis, multiple steps of optimisations, just-in-time compilation to native code, and so on, and so forth.</p>
-						</aside>
-					</section>
-				</section>
-
-
-<!-- IMPRACTICAL -->
-				<section>
-					<section>
-						<h4>Multiple clauses, guards, floats</h4>
-						<pre><code class="hljs elixir" data-trim>
-def impractical(x) when is_integer(x), do: x + 1
-def impractical(x) when is_float(x), do: x / 2
-def impractical(_), do: :batman
-						</code></pre>
-						<aside class="notes">
-							<p>Let's look at a function with multiple clauses. Given an integer argument, it returns the argument plus one. Given a float, it divides it by two. Any other argument results in the atom "batman" being returned.</p>
-							<p>Clearly not the most useful function ever, but it illustrates several points once we disassemble it.</p>
-						</aside>
-					</section>
-
-<!-- IMPRACTICAL, DISASSEMBLED -->
-					<section>
-						<h4>Multiple clauses, guards, floats (disassembled)</h4>
-						<pre><code class="hljs text" data-trim>
-000000001574CBC0: i_func_info_IaaI 0 'Elixir.Virtually' impractical 1
-000000001574CBE8: is_integer_fr f(000000001574CC20) x(0)
-000000001574CBF8: i_increment_rIId x(0) 1 1 x(0)
-000000001574CC18: return
-000000001574CC20: is_float_fr f(000000001574CCB0) x(0)
-000000001574CC30: test_heap_It 2 1
-000000001574CC40: fmove_dl x(0) fr(0)
-000000001574CC58: fmove_ql 2.000000e+00 fr(1)
-000000001574CC70: i_fdiv_lll fr(0) fr(1) fr(0)
-000000001574CC90: fmove_ld fr(0) x(0)
-000000001574CCA8: return
-000000001574CCB0: move_return_cr batman x(0)
-						</code></pre>
-					</section>
-
-<!-- IMPRACTICAL, STEP BY STEP -->
-					<section>
-						<h4>Multiple clauses, guards, floats (disassembled)</h4>
-						<pre><code class="hljs text" data-trim>
-000000001574CBC0: i_func_info_IaaI 0 'Elixir.Virtually' impractical 1
-						</code></pre>
-						<pre class="fragment"><code class="hljs text" data-trim>
-000000001574CBE8: is_integer_fr f(000000001574CC20) x(0)
-000000001574CBF8: i_increment_rIId x(0) 1 1 x(0)
-000000001574CC18: return
-						</code></pre>
-						<pre class="fragment"><code class="hljs text" data-trim>
-000000001574CC20: is_float_fr f(000000001574CCB0) x(0)
-000000001574CC30: test_heap_It 2 1
-000000001574CC40: fmove_dl x(0) fr(0)
-000000001574CC58: fmove_ql 2.000000e+00 fr(1)
-000000001574CC70: i_fdiv_lll fr(0) fr(1) fr(0)
-000000001574CC90: fmove_ld fr(0) x(0)
-000000001574CCA8: return
-						</code></pre>
-						<pre class="fragment"><code class="hljs text" data-trim>
-000000001574CCB0: move_return_cr batman x(0)
-						</code></pre>
-						<aside class="notes">
-							<p>We only have one I_FUNC_INFO, denoting that yes, this is in fact a single function. The "is_integer" instruction checks if the second operand, the X0 register, contains an integer. If so, execution continues with the next instruction. If it isn't we jump to the address indicated by the first operand.</p>
-							<p>Let's assume we do get an integer. The I_INCREMENT instruction not only adds the two first operands and places the result in the fourth, in this case X0 = X0 + 1, but its third operand indicates the number of "live" registers. A live register is a register that shouldn't be garbage collected. In this manner, several instructions combine some desired operation with cleaning up.</p>
-							<p>With the incremented integer in X0, the RETURN instruction takes us back to where the "continuation pointer" or CP register points at.</p>
-							<p>What's the continuation pointer? We don't see it in the code, but when calling a function, such as this one, the call instruction will store a pointer, on the stack, to the next instruction to execute once the function call returns. This pointer is called the continuation pointer.</p>
-							<p>Now, had this function not been passed an integer as argument, but rather a float, the next several instructions handle that. Let's go through them one by one.</p>
-							<p>Like is_integer, is_float checks that we do have a float in X0. If not, skip this block of code.</p>
-							<p>test_heap ensures that we have some free memory on the heap. Why? I’m not sure to be honest. It also indicates that we have one “live” register so X0 is not marked for garbage collection.</p>
-							<p>The first FMOVE will move the floating point number from X0 into a floating point register, FR0. The second FMOVE places the value 2.0 in the FR1 register. Next up is the I_FDIV instruction which divides FR0 with FR1, placing the result back in FR0.</p>
-							<p>A third and final “fmove” instruction copies the result back into the X0 register before we return to the calling function.</p>
-							<p>Finally, if the function is called with neither an integer nor a float, we move the atom "batman" into register X0 and return control to the calling function. Once again, the two operations have been rolled into a single superinstruction.</p>
-						</aside>
-					</section>
-
-<!-- BEAM REGISTERS -->
-					<section>
-						<h4>BEAM registers</h4>
-						<table>
-							<thead>
-								<tr>
-									<th>Register</th>
-									<th>Purpose</th>
-									<th>In code</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>R0 - R255</td>
-									<td>general purpose</td>
-									<td>x(n)</td>
-								</tr>
-								<tr>
-									<td>FR0 - FR15</td>
-									<td>floating-point operations</td>
-									<td>fr(n)</td>
-								</tr>
-								<tr>
-									<td>tmpA, tmpB</td>
-									<td>temporary</td>
-									<td>not visible</td>
-								</tr>
-								<tr>
-									<td>stack slots</td>
-									<td>local variables</td>
-									<td>y(n)</td>
-								</tr>
-							</tbody>
-						</table>
-						<aside class="notes">
-							<p>In the float handling part, we encountered the use of a new type of register, FR0 and FR1. Just like many real CPU:s, the BEAM has separate registers for floating point numbers. We still need to receive and return the float in an ordinary register, but we can only perform floating point operations on floating point registers.</p>
-							<p>In addition, there are two more special variables that behave like registers; tmpA and tmpB. These hold all manner of values used by arithmetic or logical operations. They're also used for building bitstrings.</p>
-							<p>To make things slightly more complicated, the BEAM also can allocate space on the stack for local variables, or so called "stack slots". However, passing parameters to a function is only done through the use of the general purpose registers.</p>
-							<p>In disassembled Elixir code, a stack slot is indicated by a "Y" and the number of the stack slot. We've previously seen that general registers are indicated by an “X” and a number, whereas floating point registers are denoted by “FR" and a number. The tmpA and tmpB variables aren't visible in the code, but rather implicitly used by various instructions.</p>
-						</aside>
-					</section>
-
-<!-- PARROT REGISTERS -->
-					<section>
-						<h4>Parrot registers</h4>
-						<table>
-							<thead>
-								<tr>
-									<th>Register</th>
-									<th>Purpose</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>I</td>
-									<td>native integer type</td>
-								</tr>
-								<tr>
-									<td>N</td>
-									<td>floating-point numbers</td>
-								</tr>
-								<tr>
-									<td>S</td>
-									<td>strings</td>
-								</tr>
-								<tr>
-									<td>P</td>
-									<td>PMC (Polymorphic Container)</td>
-								</tr>
-							</tbody>
-						</table>
-						<aside class="notes">
-							<p>While we're on the topic of different types of registers, as an aside, the Parrot virtual machine not only has separate registers for floats, but also for integers and strings. A final "PolyMorphic Container" type of register is used for anything else.</p>
-							<p>Okay, so far we haven't seen anything particularly unique when it comes to the BEAM instruction set. Perhaps there are some secrets hiding when it comes to a process receiving messages?</p>
-						</aside>
-					</section>
-				</section>
-
-
-<!-- RECEIVE BLOCK -->
-				<section>
-					<section>
-						<h4>Function with receive block</h4>
-						<pre><code class="hljs elixir" data-trim>
-def incommunicado do
-  receive do
-    {:ping, sender} -> send sender, :pong
-    _               -> :ignore
+		</code></pre>
+		<pre><code class="hljs ruby" data-trim>
+class Hello
+  def world
+    puts "Hello GDG!"
   end
-  incommunicado
 end
-						</code></pre>
-						<aside class="notes">
-							<p>This function will never stop checking the mailbox. If we get a tuple with the atom “ping" and a PID, we’ll reply with the atom “pong”. All other messages are silently dropped.</p>
-							<p>So how does it look like once it’s been loaded?</p>
-						</aside>
-					</section>
+		</code></pre>
+		<aside class="notes">
+			<p>From Ruby comes, superficially the syntax. More important is the shared focus on developer happiness.</p>
+		</aside>
+	</section>
 
-<!-- RECEIVE BLOCK, DISASSEMBLED -->
-					<section>
-						<h4>Function with receive block (disassembled)</h4>
-						<pre><code class="hljs text" data-trim>
-000000001A9C1468: i_func_info_IaaI 0 'Elixir.Virtually' incommunicado 0
-000000001A9C1490: allocate_tt 0 0
-000000001A9C14A0: i_loop_rec_fr f(000000001A9C1558) x(0)
-000000001A9C14B0: is_tuple_of_arity_frA f(000000001A9C1540) x(0) 2
-000000001A9C14C8: extract_next_element2_x x(1)
-000000001A9C14D8: i_is_eq_exact_immed_fxc f(000000001A9C1540) x(1) ping
-000000001A9C14F8: remove_message
-000000001A9C1500: move_x1_c pong
-000000001A9C1510: move_xr x(2) x(0)
-000000001A9C1520: call_bif_e erlang:send/2
-000000001A9C1530: i_is_lt_spec_frr f(000000001A9C1568) x(0) x(0)
-000000001A9C1540: remove_message
-000000001A9C1548: i_is_lt_spec_frr f(000000001A9C1568) x(0) x(0)
-000000001A9C1558: wait_f f(000000001A9C14A0)
-000000001A9C1568: i_call_last_fP 'Elixir.Virtually':incommunicado/0 0
-						</code></pre>
-						<aside class="notes">
-							<p>Once again, let’s go through it step by step.</p>
-						</aside>
-					</section>
+	<!-- ERLANG -->
+	<section>
+		<h4>Erlang</h4>
+		<pre><code class="hljs elixir" data-trim>
+defmodule Request do
+  def make_it do
+    handle(some_function_that_can_return_different_things)
+  end
 
-<!-- RECEIVE BLOCK, STEP BY STEP -->
-					<section>
-						<h4>Function with receive block (disassembled)</h4>
-						<pre><code class="hljs text" data-trim>
-000000001A9C1468: i_func_info_IaaI 0 'Elixir.Virtually' incommunicado 0
-000000001A9C1490: allocate_tt 0 0
-000000001A9C14A0: i_loop_rec_fr f(000000001A9C1558) x(0)
-						</code></pre>
-						<pre class="fragment" data-fragment-index="2"><code class="hljs text" data-trim>
-000000001A9C14B0: is_tuple_of_arity_frA f(000000001A9C1540) x(0) 2
-000000001A9C14C8: extract_next_element2_x x(1)
-000000001A9C14D8: i_is_eq_exact_immed_fxc f(000000001A9C1540) x(1) ping
-						</code></pre>
-						<pre class="fragment" data-fragment-index="3"><code class="hljs text" data-trim>
-000000001A9C14F8: remove_message
-000000001A9C1500: move_x1_c pong
-000000001A9C1510: move_xr x(2) x(0)
-000000001A9C1520: call_bif_e erlang:send/2
-000000001A9C1530: i_is_lt_spec_frr f(000000001A9C1568) x(0) x(0)
-						</code></pre>
-						<pre class="fragment" data-fragment-index="4"><code class="hljs text" data-trim>
-000000001A9C1540: remove_message
-000000001A9C1548: i_is_lt_spec_frr f(000000001A9C1568) x(0) x(0)
-						</code></pre>
-						<pre class="fragment" data-fragment-index="1"><code class="hljs text" data-trim>
-000000001A9C1558: wait_f f(000000001A9C14A0)
-						</code></pre>
-						<pre class="fragment" data-fragment-index="5"><code class="hljs text" data-trim>
-000000001A9C1568: i_call_last_fP 'Elixir.Virtually':incommunicado/0 0
-						</code></pre>
-						<aside class="notes">
-							<p>We start off by allocating no slots on the stack and declaring no registers as "live”. This is a way of stating that we don't care about any argument registers so feel free to garbage collect them.</p>
-							<p>With the I_LOOP_REC instruction, we move on to picking up the next message in our inbox and place it in register X0. If there is none we'll jump to a memory location that happens to be pointing to the wait instruction. As you might know, when waiting for a message to arrive in its inbox, a process is put to sleep so that it doesn’t consume any resources.</p>
-							<p>Once we've received a message, we check if it's a tuple of arity 2. Behind the scenes, if X0 at least contains a tuple, it will be stored in the tmpA temporary variable.</p>
-							<p>We then extract two elements from the tuple in tmpA, placing the first in X1 and the second in X2. The EXTRACT_NEXT_ELEMENT2 instruction is only given a single argument, the first register to use for the first element. It will implicitly use the next register for the second element.</p>
-							<p>If the first tuple element, now in register X1, turns out to be the atom "ping" we continue.</p>
-							<p>Removing the message from the inbox, we put the atom "pong" in X1. We then move the contents of X2 into X0. As you might recall, this was the second element of the received tuple, and thus the PID of the sender of the "ping" message.</p>
-							<p>Subsequently we call the built-in function "send/2". As that function takes two parameters, X0 will contain the receiver of our message and X1 will contain the contents of our message; in this case the atom "pong".</p>
-							<p>Finally, we'll jump ahead to the last instruction of the function in a convoluted way by NOT jumping if and only if X0 is less than itself which it obviously can't be.</p>
-							<p>Now, if we didn't receive a tuple with two elements or if the first element wasn't the atom "ping", we end up at the next instruction. We remove the message and then skip ahead to the last instruction in the same convoluted manner.</p>
-							<p>The last instruction, I_CALL_LAST, will call the "incommunicado" function again.This is an example of a tail call elimination, i.e. the proper way to do tail recursion. It's a GOTO that can be considered anything but harmful.</p>
-							<p>Given that messages are integral to the concurrency model it's not surprising to find a few instructions dealing with them.</p>
-						</aside>
-					</section>
-				</section>
-
-<!-- VM-SPECIFIC INSTRUCTIONS -->
-				<section>
-					<section>
-						<h2>VM-specific instructions</h2>
-					</section>
-
-					<section>
-						<table>
-							<thead>
-								<tr>
-									<th>VM</th>
-									<th>Instructions</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>BEAM</td>
-									<td>
-										message handling <em>(send, remove message)</em><br>
-										type checks <em>(is_integer, is_tuple)</em>
-									</td>
-								</tr>
-								<tr class="fragment">
-									<td>Parrot</td>
-									<td>
-										trigonemetrics <em>(sin, cos, atan)</em><br>
-										<small>(Dynamically loaded if requested)</small>
-									</td>
-								</tr>
-								<tr class="fragment">
-									<td>JVM</td>
-									<td>
-										multianewarray (allocate a multi-dimensional array)
-									</td>
-								</tr>
-							</tbody>
-						</table>
-						<aside class="notes">
-							<p>While most virtual machines have similar basic instructions for loading, storing, and manipulating data, for example adding two numbers, it's interesting to notice what different machine builders deem important enough to turn into instructions.</p>
-							<p>We've already seen that BEAM has message-handling instructions. We've also seen that it has specific instructions for testing if a register contains a value of a specific type. Actually, there's a one-to-one correlation between these type checking instructions and allowed type checks in guard clauses.</p>
-							<p>Parrot comes with a number of mathematical instructions such as sine, cosine, and arctangent. Instructions that in other machines would be composed of several more primitive floating point instructions. To be entirely honest, these aren't part of the core parrot instruction set, but are dynamically loadable at runtime. In effect you can tell the VM how to behave and what instructions to understand which is pretty nifty.</p>
-							<p>Java naturally has a number of instructions for loading and allocating new objects. My favourite is "multianewarray" which allocates space on the heap for a multidimensional array. Ideal if you want to instantiate something like a spreadsheet or a business intelligence cube. If you've ever wondered why Java has such an Enterprise-y feel to it, now you know.</p>
-							<p>Ok, a brief glimpse of one final example before we end this show.</p>
-						</aside>
-					</section>
-				</section>
-
-
-<!-- MANY LINES -->
-				<section>
-					<section>
-						<h4>3 lines of Elixir...</h4>
-						<pre><code class="hljs elixir" data-trim>
-def intractable({x, y}) do
-  "The afterparty will be at #{x}, #{y}."
+  defp handle({:ok, result}), do: result
+  defp handle({:error, message}), do: Logger.error(message)
+  defp handle(_), do: Logger.error("An unexpected thing happened")
 end
-						</code></pre>
-						<aside class="notes">
-							<p>Looking at it from the side of Elixir, this is a deceptivly-looking function. It ought to be very short, yet when disassembled, it is the longest we've encountered yet. So when loaded into the BEAM, just how many instructions are these three lines of Elixir expanded to?</p>
-						</aside>
-					</section>
+		</code></pre>
+		<aside class="notes">
+			<p>
+				From Erlang and the BEAM comes the overall semantics, as well as powerful concepts such as "pattern matching".
+				Pattern matching effectively flattens your code and allows you to construct your programs as rules engines.
+				No more pyramids of doom with conditionals nested in conditionals nested in conditionals.
+			</p>
+		</aside>
+	</section>
 
-<!-- 31 LINES DISASSEMBLED -->
-					<section>
-						<h4>...becomes 31 instructions...</h4>
-						<pre><code class="hljs text small" data-trim>
-000000001574CE10: i_func_info_IaaI 0 'Elixir.Virtually' intractable 1
-000000001574CE38: is_tuple_of_arity_frA f(000000001574CE10) x(0) 2
-000000001574CE50: allocate_zero_tt 2 1
-000000001574CE60: i_get_tuple_element_rPx x(0) 0 x(1)
-000000001574CE78: extract_next_element_y y(1)
-000000001574CE88: is_binary_fx f(000000001574CEB8) x(1)
-000000001574CEA0: move_jump_fx f(000000001574CED8) x(1)
-000000001574CEB8: move_xr x(1) x(0)
-000000001574CEC8: i_call_ext_e 'Elixir.String.Chars':to_string/1
-000000001574CED8: move_ry x(0) y(0)
-000000001574CEE8: is_binary_fy f(000000001574CF18) y(1)
-000000001574CF00: move_jump_fy f(000000001574CF48) y(1)
-000000001574CF18: move_yr y(1) x(0)
-000000001574CF28: init_y y(1)
-000000001574CF38: i_call_ext_e 'Elixir.String.Chars':to_string/1
-000000001574CF48: move_x1_c 0
-000000001574CF58: i_gc_bif1_jIsId j(0000000000000000) 348929271 x(0) 2 x(2)
-000000001574CF88: i_fetch_xx x(1) x(2)
-000000001574CF98: i_bs_add_jId j(0000000000000000) 1 x(1)
-000000001574CFB8: i_gc_bif1_jIsId j(0000000000000000) 348929271 y(0) 2 x(2)
-000000001574CFE8: i_fetch_xx x(1) x(2)
-000000001574CFF8: i_bs_add_jId j(0000000000000000) 1 x(1)
-000000001574D018: i_fetch_xc x(1) 29
-000000001574D030: i_bs_add_jId j(0000000000000000) 1 x(1)
-000000001574D050: i_bs_init_fail_xjId x(1) j(0000000000000000) 1 x(1)
-000000001574D078: bs_put_string_II 26 359977936
-000000001574D090: i_new_bs_put_binary_all_jsI j(0000000000000000) y(0) 8
-000000001574D0B0: bs_put_string_II 2 359977962
-000000001574D0C8: i_new_bs_put_binary_all_jsI j(0000000000000000) x(0) 8
-000000001574D0E8: bs_put_string_II 1 359977964
-000000001574D100: move_deallocate_return_xrQ x(1) x(0) 2
-						</code></pre>
-						<aside class="notes">
-							<p>31 to be precise. Including up to 4 function calls!</p>
-						</aside>
-					</section>
+	<!-- CLOJURE -->
+	<section>
+		<h4>Clojure</h4>
+		<pre><code class="hljs elixir" data-trim>
+defmacro divisible_by?(number, divisor) do
+  quote do
+    rem(unquote(number), unquote(divisor)) == 0
+  end
+end
+		</code></pre>
+		<pre class="fragment"><code class="hljs elixir" data-trim>
+def double_everything_except_fivers(a_bunch_of_numbers)
+  Enum.map(
+    Enum.reject(a_bunch_of_numbers,
+                fn(element) -> divisible_by?(element, 5) end),
+    fn(element) -> element * 2 end)
+end
+		</code></pre>
+		<aside class="notes">
+			<p>
+				From Clojure comes macros, allowing compile time meta programming. In fact, a great
+			  deal of Elixir itself is built in macros. It's macros all the way down.
+				And the Enum library implements the idea of reducers - a functional, composable
+				way to enumerate over collections. Through protocols this type of behaviour can be
+				implemented for your own set of custom types.
 
-<!-- 4 FUNCTION CALLS -->
-					<section>
-						<h4>...and up to 4 function calls.</h4>
-						<pre><code class="hljs text small" data-trim>
-000000001574CE10:
-000000001574CE38:
-000000001574CE50:
-000000001574CE60:
-000000001574CE78:
-000000001574CE88:
-000000001574CEA0:
-000000001574CEB8:
-000000001574CEC8: i_call_ext_e 'Elixir.String.Chars':to_string/1
-000000001574CED8:
-000000001574CEE8:
-000000001574CF00:
-000000001574CF18:
-000000001574CF28:
-000000001574CF38: i_call_ext_e 'Elixir.String.Chars':to_string/1
-000000001574CF48:
-000000001574CF58: i_gc_bif1_jIsId j(0000000000000000) 348929271 x(0) 2 x(2)
-000000001574CF88:
-000000001574CF98:
-000000001574CFB8: i_gc_bif1_jIsId j(0000000000000000) 348929271 y(0) 2 x(2)
-000000001574CFE8:
-000000001574CFF8:
-000000001574D018:
-000000001574D030:
-000000001574D050:
-000000001574D078:
-000000001574D090:
-000000001574D0B0:
-000000001574D0C8:
-000000001574D0E8:
-000000001574D100:
-						</code></pre>
-						<aside class="notes">
-							<p>The last two function calls are especially opaque as they invoke built-in guard functions, not through name, but by a specific memory address. That’s the second operand. If the guard clause BIF fails, then the its behaviour is dictated by the first operand which is a jump address. If given a proper address, code execution will continue from that address. In our example, we supply it with the the address zero, indicating that we’d rather have the guard throw an exception than jump somewhere.</p>
-						</aside>
-					</section>
-				</section>
+				But wait...that doesn't look very readable or pleasing to the eye...
+			</p>
+		</aside>
+	</section>
+
+	<!-- ML -->
+	<section>
+		<h4>ML</h4>
+		<pre><code class="hljs elixir" data-trim>
+def double_everything_except_fivers(a_bunch_of_numbers) do
+  a_bunch_of_numbers
+  |> Enum.reject(fn(number) -> divisible_by?(number, 5) end)
+  |> Enum.map(fn(number) -> number * 2 end)
+end
+		</code></pre>
+		<pre class="fragment"><code class="hljs elixir" data-trim>
+def double_everything_except_fivers(a_bunch_of_numbers) do
+  a_bunch_of_numbers
+  |> Enum.reject(&divisible_by_five?(&1))
+  |> Enum.map(&double(&1))
+end
+
+defp divisible_by_five?(value), do: divisible_by?(value, 5)
+
+defp double(value), do: value * 2
+		</code></pre>
+		<aside class="notes">
+			<p>
+				Ah, that's better. Thanks to venerable ML, we have constructions such as the pipe operator.
+				Let's clean it up further by extracting a few helper functions and using the ampersand shorthand for anonymous functions.
+			</p>
+		</aside>
+	</section>
+
+	<!-- PYTHON -->
+	<section>
+		<h4>Python</h4>
+		<pre><code class="small hljs elixir" data-trim>
+@doc """
+Returns a `Stream` of datetimes, starting with `datetime`, stepping backward one second at a time.
+## Examples
+    iex> {{2015, 2, 27}, {18, 30, 45}} |> all_seconds_before |> Enum.take(3)
+    [{{2015, 2, 27}, {18, 30, 45}},
+     {{2015, 2, 27}, {18, 30, 44}},
+     {{2015, 2, 27}, {18, 30, 43}}]
+"""
+@spec all_seconds_before(GoodTimes.datetime) :: Enumerable.t
+def all_seconds_before(datetime) do
+  datetime |> Stream.iterate(&GoodTimes.a_second_before/1)
+end
+		</code></pre>
+		<pre class="fragment"><code class="small hljs text" data-trim>
+Interactive Elixir (1.2.3) - press Ctrl+C to exit (type h() ENTER for help)
+
+iex(1)> h GoodTimes.Generate.all_seconds_before
+
+                        def all_seconds_before(datetime)
+
+Returns a Stream of datetimes, starting with datetime, stepping backward one
+second at a time.
+
+Examples
+
+┃ iex> {{2015, 2, 27}, {18, 30, 45}} |> all_seconds_before |> Enum.take(3)
+┃ [{{2015, 2, 27}, {18, 30, 45}},
+┃  {{2015, 2, 27}, {18, 30, 44}},
+┃  {{2015, 2, 27}, {18, 30, 43}}]
+		</code></pre>
+		<aside class="notes">
+			<p>
+				Python brings doc tests to the table, giving you a mechanism for keeping code
+			  and documentation in sync. In Elixir, it is not always a given that a comment lie.
+			  As an added bonus, the documentation is available from within the REPL, making it
+			  easy to explore the functionality and usage of an Elixir module.
+			 </p>
+		</aside>
+	</section>
+</section>
+
+<!-- ECOSYSTEM & TOOLS -->
+<section>
+	<section>
+		<h2>Ecosystem</h2>
+		<aside class="notes">
+			<p>Mix, Hex, Erlang interop, other BEAM languages (LFE, Erlog)</p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Tooling</h3>
+		<ul class="large">
+			<li>iex - the REPL</li>
+			<li>mix - the build tool</li>
+			<li>hex - the package manager</li>
+		</ul>
+		<aside class="notes">
+			<p></p>
+		</aside>
+	</section>
+
+	<section>
+		<h3>Libraries and interop</h3>
+		<ul class="large">
+			<li>Elixir standard library</li>
+			<li>hex packages (hex.pm)</li>
+			<li>Erlang standard library</li>
+			<li>OTP</li>
+			<li>Other BEAM languages</li>
+		</ul>
+		<aside class="notes">
+			<p>Don't wrap Erlang unless improving something.</p>
+		</aside>
+	</section>
+</section>
 
 
-<!-- GO SPELUNKING -->
-				<section>
-					<section>
-						<h4>Disassemble some Elixir...</h4>
-						<pre><code class="hljs text small" data-trim>
-0000000014FC0CA8: i_func_info_IaaI 0 'Elixir.Enum' each 2
-0000000014FC0CD0: is_list_fr f(0000000014FC0D18) x(0)
-0000000014FC0CE0: allocate_tt 0 2
-0000000014FC0CF0: i_call_f 'Elixir.Enum':'-each/2-lists^foreach/1-0-'/2
-0000000014FC0D00: move_deallocate_return_crQ ok x(0) 0
-0000000014FC0D18: allocate_tt 1 2
-0000000014FC0D28: move_ry x(0) y(0)
-0000000014FC0D38: move_xr x(1) x(0)
-0000000014FC0D48: i_make_fun_It 344639352 1
-0000000014FC0D60: move_x1_c nil
-0000000014FC0D70: move_rx x(0) x(2)
-0000000014FC0D80: move_yr y(0) x(0)
-0000000014FC0D90: i_trim_I 1
-0000000014FC0DA0: i_call_f 'Elixir.Enum':reduce/3
-0000000014FC0DB0: move_deallocate_return_crQ ok x(0) 0
-						</code></pre>
-						<span class="fragment">
-							<h4>...or Erlang</h4>
-							<pre><code class="hljs text small" data-trim>
-00000000161A5970: i_func_info_IaaI 0 erts_debug size 3
-00000000161A5998: is_nonempty_list_allocate_frIt f(00000000161A5B00) x(0) 4 3
-00000000161A59B0: get_list_ryy x(0) y(3) y(2)
-00000000161A59C0: move2_xyxy x(2) y(0) x(1) y(1)
-00000000161A59D0: i_call_f erts_debug:remember_term/2
-...               ...
-							</code></pre>
-							<small class="fragment">Yes, disassemble the function that disassemble functions and study it.</small>
-						</span>
-						<aside class="notes">
-							<p>We're not limited to disassembling our own code. In fact, apart from built-in functions, we can pick apart any loaded module we like, be it a part of OTP, the Elixir standard library, [dissasemble Enum.each] or core Erlang modules. Or why not study the disassemblation function "df" itself? [disassemble Etlang.df] </p>
-							<p>We don't have time to do more of it here and now, but it's quite fun to go spelunking deep down under the surface. If you really want to see and learn what's going on deep down in the caverns of the BEAM, this is one way of doing it.</p>
-							<p>Going deeper still, requires reading BEAM's C code.</p>
-						</aside>
-					</section>
+<!-- PHILOSOPHY -->
+<section>
+	<section>
+		<h2>Philosophy</h2>
+		<aside class="notes">
+			<p>
+				At the heart of any new language that has been designed rather than haphazardly put together (hello Javascript) lies
+				a number of principles and ideas that shapes and forms the language and thus in turn shapes and forms the way you
+				think when using the language to solve any given problem.
+			</p>
+		</aside>
+	</section>
 
-<!-- YOU CALL THAT FUN? -->
-					<section>
-						<h4>That's your idea of fun?</h4>
-						<img width="629" height="340" data-src="images/lucky_bastard.jpg" alt="You lucky bastards!">
-						<aside class="notes">
-							<p>Catering to your masochistic tendencies or an overly curious mind is all well and good. But is there any practical reason for doing this?</p>
-							<p>No. There isn't.</p>
-							<p>Assuming two things:</p>
-						</aside>
-					</section>
+	<!-- CONCURRENCY -->
+	<section>
+		<h3>Massive concurrency...</h3>
+		<aside class="notes">
+			<p>
+				Erlang and hence Elixir is massively concurrent. Rather than spinning up heavy operating system processes and threads,
+				the virtual machine is capable of running literally millions of extremely light-weight processes.
+			</p>
+		</aside>
+	</section>
 
-<!-- OTP ASSUMPTIONS -->
-					<section>
-						<h4>"Reasonable" assumptions</h4>
-						<ol>
-							<li>The Erlang/OTP team will be around forever.</li>
-							<li>They will always be eager to work on things that matter to Elixir.</li>
-						</ol>
-						<aside class="notes">
-							<p>Right.</p>
-							<p>If one does study the BEAM internals, what can be done with that knowledge?</p>
-						</aside>
-					</section>
+	<!-- PARALLELISM -->
+	<section>
+		<h3>...and parallelism</h3>
+		<aside class="notes">
+			<p>
+				Where concurrency is about dealing with multiple things, parallelism is all about dealing with them at the same time.
+				BEAM, the Erlang VM allocates as many native OS threads as there are CPU cores. On top of that it puts its own scheduler
+				and balancer to evenly spread out the workload encapsulated in all those light-weight processes. In short, this means
+				efficient resource utilisation.
+			</p>
+		</aside>
+	</section>
 
-<!-- BENEFITS -->
-					<section>
-						<h4>A few possibilities</h4>
-						<ul>
-							<li>Contribute to the core of Erlang/OTP.</li>
-							<li>Ensure the BEAM's future by spreading the knowledge.</li>
-							<li>Ensure Elixir's future by implementing alternative, compatible VM:s.</li>
-						</ul>
-						<aside class="notes">
-							<p>If we want to see support for more functions allowed in guard clauses, chances are it takes very low-level changes.</p>
-							<p>Like I said, it's all about catering to your masochistic tendencies.</p>
-							<p>If you consider undertaking suchan endavour, be aware that there aren't any readily available and up to date maps of the BEAM cave system. If there's a map at all, it got a good deal of empty space on it, marked with three words; hic sunt dracones. Here be dragons.</p>
-							<p>Consider this talk to be a few hastily scribbled notes and observations next to that big, empty space calling out to be explored.</p>
-						</aside>
-					</section>
-				</section>
+	<!-- THOUSANDS OF WEB SERVERS -->
+	<section>
+		<div class="quote">We do not have ONE web-server handling 2 millions sessions.</div>
+		<div class="fragment quote">We have 2 million webservers handling one session each.</div>
+		<aside class="notes">
+			<p>
+				This massive concurrency and parallelism allows our thinking to shift. As Joe Armstrong, one of the inventors of Erlang puts it:
+			</p>
+		</aside>
+	</section>
+
+	<!-- ACTOR -->
+	<section>
+		<h3>Actors</h3>
+		<aside class="notes">
+			<p>
+				These light-weight process, we call actors. The only way of interacting with an actor is to send it a message. Asynchronously.
+				Unlike Go where a channel is the addressable entity, in Elixir you address actors. Moreover, on a language level there is no
+				difference between sending a message to an actor on your node or to an actor that's running on another node in your cluster.
+			</p>
+		</aside>
+	</section>
+
+	<!-- IMMUTABLE -->
+	<section>
+		<h3>Immutable data</h3>
+		<aside class="notes">
+			<p>
+				Coupled with immutable data, we have guarantees that the sand will not shift under our feet, but that we rather can build our
+				multi-process applications without fear.
+			</p>
+		</aside>
+	</section>
+
+	<!-- OTP -->
+	<section>
+		<h3>OTP</h3>
+		<aside class="notes">
+			<p>
+				On top of these primitives, we have the OTP framework that helps and enables us to build and manage these massively concurrent and distributed systems. It codifies the next principle I'd like to talk about.
+			</p>
+		</aside>
+	</section>
+
+	<!-- Let it crash -->
+	<section>
+		<h3>Let it crash!</h3>
+		<aside class="notes">
+			<p>
+				Ask yourself this: which is easiest? To foresee and handle every possible eventuality and error or to figure out the easiest
+				way to quickly recover and get back in to a goood state?
+				For many of us, "have you tried turning it off and on?" surprisingly often is the best way to go about it.
+				We avoid defensive coding that litter our otherwise clean code with conditionals and paranoia.
+			</p>
+		</aside>
+	</section>
+
+	<!-- SUPERVISON TREES -->
+	<section>
+		<h3>Supervision trees</h3>
+		<aside class="notes">
+			<p>
+				Aiding us in this are supervision trees. A supervisor is an actor that's only job is to monitor, restart, and recover other failing actors. When a worker terminates abnormally, a supervisor restarts and restores it. That supervisor in turn might be monitored and handled by another supervisor and so on. This way we build a supervision tree that cleanly and orderly propagates errors in a deterministic way. A fault in a fringe part of your system will not take the whole system down.
+			</p>
+		</aside>
+	</section>
+
+	<!-- AN HOLLISTIC APPROACH -->
+	<section>
+		<h3>Elixir's hollistic approach</h3>
+		<aside class="notes">
+			<p>
+			What I think is Elixir's crowning acheivement is not that it uncovers Erlang and it's virtual machine from a layer of dust and gives it a modern flavour.
+			It's not that a great many ideas from other langauges coalesces in Elixir.
+			It's not that the language and learning resources such as books were practically written in parallel.
+			It's not the tooling, some of which was badly missing in the Erlang world.
+			It's not the friendly, open, and inviting community.
+			It's all of it.
+			Too me, Elixir is much more than "just" a language. It's fully baked. It's here. And it deserves a place in your toolbox.
+			</p>
+		</aside>
+	</section>
+</section>
+
+<!-- RESOURCES -->
+<section>
+	<section>
+		<h2>Learning resources</h2>
+		<aside class="notes">
+			<p>So, if you do want to learn more, here are a few pointers.</p>
+		</aside>
+	</section>
+
+	<section>
+		<ul class="none">
+			<li>Tutorials - <span class="reference">elixir-lang.org, elixirschool.com</span></li>
+			<li>Exercises - <span class="reference">exercism.io</span></li>
+			<li>Books - <span class="reference">Programming Elixir, Programming Phoenix</span></li>
+			<li>Screencasts - <span class="reference">Elixir Sips, LearnElixir.tv</span></li>
+			<li>Conferences - <span class="reference">ElixirConf EU, ElixirConf US</span></li>
+			<li>Meetups - <span class="reference">Stockholm Elixir</span></li>
+		</ul>
+		<aside class="notes">
+			<p></p>
+		</aside>
+	</section>
+</section>
 
 <!-- END -->
-				<section>
-					<h4>You've been virtually instructed by</h4>
-					<p>Lennart Fridén</p>
-					<p>
-						<small>
-							<a href="http://codecoupled.org">codecoupled.org</a> |
-					  	<a href="http://twitter.com/DevLCSC">@DevLCSC</a> |
-					  	<a href="http://github.com/DevL">github.com/DevL</a>
-						</small>
-					</p>
-					<p><small>ElixirConf 2015, Austin, TX</small></p>
-				</section>
+<section>
+	<h4>Code Concur</h4>
+	<p>Lennart Fridén</p>
+	<p>
+		<small>
+			<a href="http://codecoupled.org">codecoupled.org</a> |
+	  	<a href="http://twitter.com/DevLCSC">@DevLCSC</a> |
+	  	<a href="http://github.com/DevL">github.com/DevL</a>
+		</small>
+	</p>
+	<p><small>Stockholm Google Developer Group March 2016 Meetup</small></p>
+</section>
 
 			</div>
 		</div>
